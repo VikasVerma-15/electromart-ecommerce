@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/axios';
 
 const AuthContext = createContext();
 
@@ -26,9 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get('/api/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get('/api/profile');
       setUser(response.data);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -40,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/api/login', { email, password });
+      const response = await api.post('/api/login', { email, password });
       const { userToken, ...userData } = response.data;
       setToken(userToken);
       setUser(userData);
@@ -56,9 +54,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('/api/register', { name, email, password });
+      const response = await api.post('/api/register', { name, email, password });
       // After successful registration, automatically log the user in
-      const loginResponse = await axios.post('/api/login', { email, password });
+      const loginResponse = await api.post('/api/login', { email, password });
       const { userToken, ...userData } = loginResponse.data;
       setToken(userToken);
       setUser(userData);
